@@ -100,7 +100,7 @@ const checkRequestQueries = async (request, response, next) => {
 };
 
 const checkRequestBody = async (request, response, next) => {
-  const { search_q, category, priority, status, date } = request.query;
+  const { search_q, category, priority, status, date } = request.body;
   const { todoId } = request.params;
 
   if (category !== undefined) {
