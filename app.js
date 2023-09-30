@@ -193,29 +193,25 @@ app.get("/todos/:todoId", checkRequestQueries, async (request, response) => {
   response.send(dbResponse);
 });
 
+
 app.get("/agenda/", checkRequestQueries, async (request, response) => {
   const { date } = request.query;
-  const Query = `
-        SELECT
-            id,
-            todo,
-            priority,
-            status,
-            category,
-            due_date AS dueDate
-        FROM 
-            todo
-        WHERE 
-            due_date = '${date}'
-        ;`;
 
-  const dbResponse = await db.all(Query);
-
-  if (dbResponse === undefined) {
+  if (date !== undefined) {
+    const isValidDate = isValid(new Date(date));
+    if (isValidDate) {
+      const formattedDate = format(new Date(date), "yyyy-MM-dd");
+      const Query3 = `select id, todo, priority, status, category,
+  due_date AS dueDate from todo where due_date = '${formattedDate}';`;
+      const todos = await db.all(Query3);
+      response.send(todos);
+    } else {
+      response.status(400);
+      response.send("Invalid Due Date");
+    }
+  } else {
     response.status(400);
     response.send("Invalid Due Date");
-  } else {
-    response.send(dbResponse);
   }
 });
 
